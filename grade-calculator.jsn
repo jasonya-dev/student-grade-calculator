@@ -1,0 +1,114 @@
+"""
+Student Grade Calculator
+-------------------------
+A simple command-line program to record student scores, calculate
+averages, and assign letter grades.
+
+Author: "Jason Nya"
+"""
+
+
+def get_letter_grade(average):
+    """Convert a numeric average into a letter grade."""
+    if average >= 90:
+        return "A"
+    elif average >= 80:
+        return "B"
+    elif average >= 70:
+        return "C"
+    elif average >= 60:
+        return "D"
+    else:
+        return "F"
+
+
+def calculate_average(scores):
+    """Return the average of a list of numeric scores."""
+    if not scores:
+        return 0
+    return sum(scores) / len(scores)
+
+
+def get_scores_from_user():
+    """Prompt the user to enter scores for one student, one at a time."""
+    scores = []
+    print("Enter scores one at a time. Type 'done' when finished.")
+    while True:
+        entry = input("Score: ").strip()
+        if entry.lower() == "done":
+            break
+        try:
+            value = float(entry)
+            if 0 <= value <= 100:
+                scores.append(value)
+            else:
+                print("Please enter a score between 0 and 100.")
+        except ValueError:
+            print("That's not a valid number. Try again or type 'done'.")
+    return scores
+
+
+def add_student(students):
+    """Collect a student's name and scores, then store the result."""
+    name = input("Student name: ").strip()
+    scores = get_scores_from_user()
+    average = calculate_average(scores)
+    grade = get_letter_grade(average)
+    students[name] = {"scores": scores, "average": average, "grade": grade}
+    print(f"\n{name}: average = {average:.2f}, grade = {grade}\n")
+
+
+def show_report(students):
+    """Print a summary table of all students entered so far."""
+    if not students:
+        print("No students have been added yet.\n")
+        return
+
+    print("\n" + "-" * 50)
+    print(f"{'Name':<20}{'Average':<12}{'Grade':<10}")
+    print("-" * 50)
+    for name, data in students.items():
+        print(f"{name:<20}{data['average']:<12.2f}{data['grade']:<10}")
+    print("-" * 50 + "\n")
+
+
+def show_class_average(students):
+    """Print the average score across all students."""
+    if not students:
+        print("No students have been added yet.\n")
+        return
+    all_averages = [data["average"] for data in students.values()]
+    class_avg = sum(all_averages) / len(all_averages)
+    print(f"\nClass average: {class_avg:.2f}\n")
+
+
+def main():
+    students = {}
+
+    menu = """
+=== Student Grade Calculator ===
+1. Add a student and their scores
+2. Show report for all students
+3. Show class average
+4. Exit
+"""
+
+    while True:
+        print(menu)
+        choice = input("Choose an option (1-4): ").strip()
+
+        if choice == "1":
+            add_student(students)
+        elif choice == "2":
+            show_report(students)
+        elif choice == "3":
+            show_class_average(students)
+        elif choice == "4":
+            print("Goodbye!")
+            break
+        else:
+            print("Invalid option. Please choose 1, 2, 3, or 4.\n")
+
+
+if __name__ == "__main__":
+    main()
