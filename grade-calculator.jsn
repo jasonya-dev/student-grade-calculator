@@ -1,114 +1,88 @@
-"""
-Student Grade Calculator
--------------------------
-A simple command-line program to record student scores, calculate
-averages, and assign letter grades.
+students = {}
 
-Author: "Jason Nya"
-"""
+while True:
+    print("\n=== Student Grade Calculator ===")
+    print("1. Add a student")
+    print("2. Show student report")
+    print("3. Show class average")
+    print("4. Exit")
 
+    choice = input("Choose an option (1-4): ")
 
-def get_letter_grade(average):
-    """Convert a numeric average into a letter grade."""
-    if average >= 90:
-        return "A"
-    elif average >= 80:
-        return "B"
-    elif average >= 70:
-        return "C"
-    elif average >= 60:
-        return "D"
-    else:
-        return "F"
+    if choice == "1":
+        name = input("Enter student name: ")
+        scores = []
 
+        print("Enter scores one at a time.")
+        print("Type 'done' when finished.")
 
-def calculate_average(scores):
-    """Return the average of a list of numeric scores."""
-    if not scores:
-        return 0
-    return sum(scores) / len(scores)
+        while True:
+            score = input("Score: ")
 
+            if score.lower() == "done":
+                break
 
-def get_scores_from_user():
-    """Prompt the user to enter scores for one student, one at a time."""
-    scores = []
-    print("Enter scores one at a time. Type 'done' when finished.")
-    while True:
-        entry = input("Score: ").strip()
-        if entry.lower() == "done":
-            break
-        try:
-            value = float(entry)
-            if 0 <= value <= 100:
-                scores.append(value)
-            else:
-                print("Please enter a score between 0 and 100.")
-        except ValueError:
-            print("That's not a valid number. Try again or type 'done'.")
-    return scores
+            try:
+                score = float(score)
 
+                if score < 0 or score > 100:
+                    print("Please enter a score between 0 and 100.")
+                else:
+                    scores.append(score)
 
-def add_student(students):
-    """Collect a student's name and scores, then store the result."""
-    name = input("Student name: ").strip()
-    scores = get_scores_from_user()
-    average = calculate_average(scores)
-    grade = get_letter_grade(average)
-    students[name] = {"scores": scores, "average": average, "grade": grade}
-    print(f"\n{name}: average = {average:.2f}, grade = {grade}\n")
+            except ValueError:
+                print("Please enter a valid number.")
 
-
-def show_report(students):
-    """Print a summary table of all students entered so far."""
-    if not students:
-        print("No students have been added yet.\n")
-        return
-
-    print("\n" + "-" * 50)
-    print(f"{'Name':<20}{'Average':<12}{'Grade':<10}")
-    print("-" * 50)
-    for name, data in students.items():
-        print(f"{name:<20}{data['average']:<12.2f}{data['grade']:<10}")
-    print("-" * 50 + "\n")
-
-
-def show_class_average(students):
-    """Print the average score across all students."""
-    if not students:
-        print("No students have been added yet.\n")
-        return
-    all_averages = [data["average"] for data in students.values()]
-    class_avg = sum(all_averages) / len(all_averages)
-    print(f"\nClass average: {class_avg:.2f}\n")
-
-
-def main():
-    students = {}
-
-    menu = """
-=== Student Grade Calculator ===
-1. Add a student and their scores
-2. Show report for all students
-3. Show class average
-4. Exit
-"""
-
-    while True:
-        print(menu)
-        choice = input("Choose an option (1-4): ").strip()
-
-        if choice == "1":
-            add_student(students)
-        elif choice == "2":
-            show_report(students)
-        elif choice == "3":
-            show_class_average(students)
-        elif choice == "4":
-            print("Goodbye!")
-            break
+        if len(scores) == 0:
+            print("No scores were entered.")
         else:
-            print("Invalid option. Please choose 1, 2, 3, or 4.\n")
+            average = sum(scores) / len(scores)
 
+            if average >= 90:
+                letter = "A"
+            elif average >= 80:
+                letter = "B"
+            elif average >= 70:
+                letter = "C"
+            elif average >= 60:
+                letter = "D"
+            else:
+                letter = "F"
 
-if __name__ == "__main__":
-    main()
+            students[name] = {
+                "scores": scores,
+                "average": average,
+                "letter": letter
+            }
+
+            print(f"\n{name}'s average: {average:.2f}")
+            print(f"Letter grade: {letter}")
+
+    elif choice == "2":
+        if len(students) == 0:
+            print("No students have been added yet.")
+        else:
+            print("\n=== Student Report ===")
+
+            for name, information in students.items():
+                print(f"{name}: Average = {information['average']:.2f}, Grade = {information['letter']}")
+
+    elif choice == "3":
+        if len(students) == 0:
+            print("No students have been added yet.")
+        else:
+            total = 0
+
+            for information in students.values():
+                total += information["average"]
+
+            class_average = total / len(students)
+
+            print(f"\nClass average: {class_average:.2f}")
+
+    elif choice == "4":
+        print("Thanks for using the Student Grade Calculator!")
+        break
+
+    else:
+        print("Invalid choice. Please choose 1, 2, 3, or 4.")
